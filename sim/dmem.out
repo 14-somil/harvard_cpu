@@ -1,0 +1,134 @@
+#! /usr/bin/vvp
+:ivl_version "12.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 12;
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_sys.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_textio.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2005_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/va_math.vpi";
+S_0x5d9a61ff4100 .scope module, "dmem_tb" "dmem_tb" 2 3;
+ .timescale -9 -12;
+v0x5d9a6201ed30_0 .var "addr", 31 0;
+v0x5d9a6201ee10_0 .var "clk", 0 0;
+v0x5d9a6201eee0_0 .net "rd", 31 0, L_0x5d9a6201f500;  1 drivers
+v0x5d9a6201efe0_0 .var "wd", 31 0;
+v0x5d9a6201f0b0_0 .var "we", 0 0;
+S_0x5d9a62006b00 .scope module, "dmem_inst" "dmem" 2 11, 3 1 0, S_0x5d9a61ff4100;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "we";
+    .port_info 2 /INPUT 32 "addr";
+    .port_info 3 /INPUT 32 "wd";
+    .port_info 4 /OUTPUT 32 "rd";
+L_0x5d9a6201f500 .functor BUFZ 32, L_0x5d9a6201f150, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
+v0x5d9a62006ce0_0 .net *"_ivl_0", 31 0, L_0x5d9a6201f150;  1 drivers
+v0x5d9a6201e4b0_0 .net *"_ivl_2", 31 0, L_0x5d9a6201f370;  1 drivers
+v0x5d9a6201e590_0 .net *"_ivl_4", 29 0, L_0x5d9a6201f250;  1 drivers
+L_0x72a2522c1018 .functor BUFT 1, C4<00>, C4<0>, C4<0>, C4<0>;
+v0x5d9a6201e680_0 .net *"_ivl_6", 1 0, L_0x72a2522c1018;  1 drivers
+v0x5d9a6201e760_0 .net "addr", 31 0, v0x5d9a6201ed30_0;  1 drivers
+v0x5d9a6201e890_0 .net "clk", 0 0, v0x5d9a6201ee10_0;  1 drivers
+v0x5d9a6201e950 .array "memory", 255 0, 31 0;
+v0x5d9a6201ea10_0 .net "rd", 31 0, L_0x5d9a6201f500;  alias, 1 drivers
+v0x5d9a6201eaf0_0 .net "wd", 31 0, v0x5d9a6201efe0_0;  1 drivers
+v0x5d9a6201ebd0_0 .net "we", 0 0, v0x5d9a6201f0b0_0;  1 drivers
+E_0x5d9a62005ee0 .event posedge, v0x5d9a6201e890_0;
+L_0x5d9a6201f150 .array/port v0x5d9a6201e950, L_0x5d9a6201f370;
+L_0x5d9a6201f250 .part v0x5d9a6201ed30_0, 2, 30;
+L_0x5d9a6201f370 .concat [ 30 2 0 0], L_0x5d9a6201f250, L_0x72a2522c1018;
+    .scope S_0x5d9a62006b00;
+T_0 ;
+    %wait E_0x5d9a62005ee0;
+    %load/vec4 v0x5d9a6201ebd0_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.0, 8;
+    %load/vec4 v0x5d9a6201eaf0_0;
+    %load/vec4 v0x5d9a6201e760_0;
+    %ix/load 4, 2, 0;
+    %flag_set/imm 4, 0;
+    %shiftr 4;
+    %ix/vec4 3;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v0x5d9a6201e950, 0, 4;
+T_0.0 ;
+    %jmp T_0;
+    .thread T_0;
+    .scope S_0x5d9a61ff4100;
+T_1 ;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x5d9a6201ee10_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x5d9a6201f0b0_0, 0, 1;
+    %end;
+    .thread T_1;
+    .scope S_0x5d9a61ff4100;
+T_2 ;
+    %delay 5000, 0;
+    %load/vec4 v0x5d9a6201ee10_0;
+    %inv;
+    %store/vec4 v0x5d9a6201ee10_0, 0, 1;
+    %jmp T_2;
+    .thread T_2;
+    .scope S_0x5d9a61ff4100;
+T_3 ;
+    %vpi_call 2 16 "$dumpfile", "sim/dmem.vcd" {0 0 0};
+    %vpi_call 2 17 "$dumpvars", 32'sb00000000000000000000000000000000, S_0x5d9a61ff4100 {0 0 0};
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x5d9a6201f0b0_0, 0, 1;
+    %pushi/vec4 0, 0, 32;
+    %store/vec4 v0x5d9a6201ed30_0, 0, 32;
+    %pushi/vec4 10, 0, 32;
+    %store/vec4 v0x5d9a6201efe0_0, 0, 32;
+    %delay 10000, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x5d9a6201f0b0_0, 0, 1;
+    %pushi/vec4 4, 0, 32;
+    %store/vec4 v0x5d9a6201ed30_0, 0, 32;
+    %pushi/vec4 170, 0, 32;
+    %store/vec4 v0x5d9a6201efe0_0, 0, 32;
+    %delay 10000, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x5d9a6201f0b0_0, 0, 1;
+    %pushi/vec4 8, 0, 32;
+    %store/vec4 v0x5d9a6201ed30_0, 0, 32;
+    %pushi/vec4 2730, 0, 32;
+    %store/vec4 v0x5d9a6201efe0_0, 0, 32;
+    %delay 10000, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x5d9a6201f0b0_0, 0, 1;
+    %pushi/vec4 12, 0, 32;
+    %store/vec4 v0x5d9a6201ed30_0, 0, 32;
+    %pushi/vec4 43690, 0, 32;
+    %store/vec4 v0x5d9a6201efe0_0, 0, 32;
+    %delay 10000, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x5d9a6201f0b0_0, 0, 1;
+    %pushi/vec4 0, 0, 32;
+    %store/vec4 v0x5d9a6201ed30_0, 0, 32;
+    %pushi/vec4 10, 0, 32;
+    %store/vec4 v0x5d9a6201efe0_0, 0, 32;
+    %delay 10000, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x5d9a6201f0b0_0, 0, 1;
+    %pushi/vec4 4, 0, 32;
+    %store/vec4 v0x5d9a6201ed30_0, 0, 32;
+    %pushi/vec4 10, 0, 32;
+    %store/vec4 v0x5d9a6201efe0_0, 0, 32;
+    %delay 10000, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x5d9a6201f0b0_0, 0, 1;
+    %pushi/vec4 8, 0, 32;
+    %store/vec4 v0x5d9a6201ed30_0, 0, 32;
+    %pushi/vec4 10, 0, 32;
+    %store/vec4 v0x5d9a6201efe0_0, 0, 32;
+    %delay 10000, 0;
+    %vpi_call 2 27 "$finish" {0 0 0};
+    %end;
+    .thread T_3;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "tb/dmem_tb.v";
+    "rtl/dmem.v";
