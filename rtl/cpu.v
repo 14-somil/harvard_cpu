@@ -1,38 +1,43 @@
 module cpu (
     input clk,
-    input reset
+    input reset,
+
+    //IMEM ports
+    input [31:0] instr,
+    output [31:0] imem_addr,
+
+    //DMEM ports
+    input [31:0] dmem_rd,
+    output [31:0] dmem_addr, dmem_wd,
+    output dmem_we 
 );
-    // INTERNAL WIRES
+    //INTERNAL WIRES
+	
+	wire [31:0] pc, next_pc;
 
-    wire [31:0] pc, next_pc;
+	wire [5:0] opcode;
+	wire [4:0] rs1, rs2, rd;
+	wire [15:0] imm;
 
-    wire [31:0] instr;
+	wire [31:0] reg_data1, reg_data2;
+	wire [4:0] write_reg;
+	wire [31:0] write_data;
 
-    wire [5:0] opcode;
-    wire [4:0] rs1, rs2, rd;
-    wire [15:0] imm;
+	wire [31:0] alu_in2;
+	wire [31:0] alu_result;
 
-    wire [31:0] reg_data1, reg_data2;
-    wire [4:0] write_reg;
-    wire [31:0] write_data;
+	wire reg_write, reg_dst, alu_src;
+	wire [2:0] alu_op;
+	wire mem_write, mem_read, mem_to_reg;
+	wire branch;
 
-    wire [31:0] alu_in2;
-    wire [31:0] alu_result;
+	wire [31:0] imm_ext;
 
-    wire [31:0] mem_data;
+	wire branch_taken;
 
-    wire reg_write, reg_dst, alu_src;
-    wire [2:0] alu_op;
-    wire mem_write, mem_read, mem_to_reg;
-    wire branch;
+	//INSTRUCTION DECODE
 
-    wire [31:0] imm_ext;
-    
-    wire branch_taken;
-
-    //INSTRUCTION DECODE
-
-    assign opcode = instr[31:26];
+	assign opcode = instr[31:26];
     assign rs1 = instr[25:21];
     assign rs2 = instr[20:16];
     assign rd  = instr[15:11];
@@ -45,11 +50,6 @@ module cpu (
         .reset(reset),
         .next_pc(next_pc),
         .pc(pc)
-    );
-
-    imem imem_inst (
-        .addr(pc),
-        .instr(instr)
     );
 
     cu cu_inst (
@@ -88,18 +88,17 @@ module cpu (
         .result(alu_result)
     );
 
-    dmem dmem_inst (
-        .clk(clk),
-        .we(mem_write),
-        .addr(alu_result),
-        .wd(reg_data2),
-        .rd(mem_data)
-    );
-
-    assign write_data = mem_to_reg ? mem_data : alu_result;
-
     assign branch_taken = branch & (alu_result == 0);
 
     assign next_pc = branch_taken ? (pc + (imm_ext << 2)) : (pc+4);
 
+    //MEMORY CONNECTIONS
+    assign dmem_we = mem_write;
+    assign dmem_addr = alu_result;
+    assign dmem_wd = reg_data2;
+
+    assign imem_addr = pc;
+    
+    assign write_data = mem_to_reg ? dmem_rd : alu_result;
+	
 endmodule
